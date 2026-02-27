@@ -51,7 +51,7 @@ class NotificationManager:
                 print(f"Trying {ds160_id[-4:]}")
                 res = query_status(
                     self.__location,
-                    self.__number,
+                    ds160_id,
                     self.__passport_number,
                     self.__surname,
                     self.__captchaHandle,
