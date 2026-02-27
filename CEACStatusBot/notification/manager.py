@@ -47,6 +47,7 @@ class NotificationManager:
         ds160_ids = self.__number.split(',')
         for ds160_id in ds160_ids:
             try:
+                print(f"Trying {ds160_id[-4:]}")
                 res = query_status(
                     self.__location,
                     self.__number,
