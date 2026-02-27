@@ -14,10 +14,16 @@ class TelegramNotificationHandle(NotificationHandle):
         # {'success': True, 'visa_type': 'NONIMMIGRANT VISA APPLICATION', 'status': 'Issued', 'case_created': '30-Aug-2022', 'case_last_updated': '19-Oct-2022', 'description': 'Your visa is in final processing. If you have not received it in more than 10 working days, please see the webpage for contact information of the embassy or consulate where you submitted your application.', 'application_num': '***'}
 
         message_title = f"[CEACStatusBot] {result['application_num_origin']}: {result['status']}"
-        message_content = html.escape(json.dumps(result, indent=2))
+        message_content = f"- Time fetched: {result['time']}\n"
+        message_content += f"- Time created: {result['case_created']}\n"
+        message_content += f"- Time updated: {result['case_last_updated']}\n"
+        message_content += f"- Status: <b>{result['status']}</b>\n"
+        message_content += f"- Description: \n"
+        message_content += f"<i>{result['description']}</i>"
+
 
         # Construct the message text with the title in bold
-        message_text = f"<b>{message_title}</b>\n\n<pre>{message_content}</pre>"
+        message_text = f"<b>{message_title}</b>\n{message_content}"
 
         # Send the message using the Telegram Bot API
         response = requests.post(self.__api_url, data={

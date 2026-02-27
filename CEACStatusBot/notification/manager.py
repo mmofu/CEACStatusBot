@@ -44,27 +44,32 @@ class NotificationManager:
         self.__handleList.append(notificationHandle)
 
     def send(self) -> None:
-        res = query_status(
-            self.__location,
-            self.__number,
-            self.__passport_number,
-            self.__surname,
-            self.__captchaHandle,
-        )
-        if not res["success"]:
-            raise RuntimeError("Query status failed, no notification sent.")
-        current_status = res["status"]
-        current_last_updated = res["case_last_updated"]
-        print(f"Current status: {current_status} - Last updated: {current_last_updated}")
-        # Load the previous statuses from the file
-        statuses = self.__load_statuses()
+        ds160_ids = self.__number.split(',')
+        for ds160_id in ds160_ids:
+            try:
+                res = query_status(
+                    self.__location,
+                    self.__number,
+                    self.__passport_number,
+                    self.__surname,
+                    self.__captchaHandle,
+                )
+                if not res["success"]:
+                    raise RuntimeError("Query status failed, no notification sent.")
+                current_status = res["status"]
+                current_last_updated = res["case_last_updated"]
+                print(f"Current status: {current_status} - Last updated: {current_last_updated}")
+                # Load the previous statuses from the file
+                statuses = self.__load_statuses()
 
-        # Check if the current status is different from the last recorded status
-        if not statuses or current_status != statuses[-1].get("status", None) or current_last_updated != statuses[-1].get("last_updated", None):
-            self.__save_current_status(current_status, current_last_updated)
-            self.__send_notifications(res)
-        else:
-            print("Status unchanged. No notification sent.")
+                # Check if the current status is different from the last recorded status
+                if not statuses or current_status != statuses[-1].get("status", None) or current_last_updated != statuses[-1].get("last_updated", None):
+                    self.__save_current_status(current_status, current_last_updated)
+                    self.__send_notifications(res)
+                else:
+                    print("Status unchanged. No notification sent.")
+            except RuntimeError as e:
+                pass
 
     def __load_statuses(self) -> list:
         if os.path.exists(self.__status_file):
