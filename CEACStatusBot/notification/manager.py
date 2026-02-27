@@ -1,6 +1,7 @@
 import json
 import os
 import datetime
+import time
 
 import pytz
 
@@ -70,6 +71,8 @@ class NotificationManager:
                 else:
                     print("Status unchanged. No notification sent.")
             except RuntimeError as e:
+                print(f"Runtime exception occurred for {ds160_id[-4:]}")
+                time.sleep(2)
                 pass
 
     def __load_statuses(self) -> list:
